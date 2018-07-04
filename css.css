@@ -1,1 +1,14 @@
+body{
+  background-color: lighgrey;
+}
+h3 {
+  color:#ffffff;
+}
+.zaglavlje{
+  background: linear-gradient(purple,blue);
+  border-radius: 5px;);
 
+  padding-top: 30px;
+  padding-bottom: 10px;
+text-align: center;
+}
