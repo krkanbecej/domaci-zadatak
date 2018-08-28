@@ -1,9 +1,12 @@
 body{
   background-color: #fff;
-  font-family: arial;
+  font-family: georgia;
 }
 h3 {
   color:#ffffff;
+}
+
+h2{color:#f6f31d;
 }
 .zaglavlje{
   background: linear-gradient(purple,blue);
@@ -17,7 +20,7 @@ h3 {
 .telo{
   background-color: grey;
   color: #fff;
-  border-radius: 5px;
+  border-radius: 15px;
   padding:20px;
   margin-top: 3px;
   text-align: justify;
