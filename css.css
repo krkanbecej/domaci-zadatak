@@ -10,7 +10,7 @@ h2{color:#f6f31d;
 }
 .zaglavlje{
   background: linear-gradient(purple,blue);
-  border-radius: 5px;
+  border-radius: 15px;
   height: auto;
   padding-top: 30px;
   padding-bottom: 10px;
@@ -24,6 +24,9 @@ h2{color:#f6f31d;
   padding:20px;
   margin-top: 3px;
   text-align: justify;
+  font-size: 20px;
+  font-style: italic;
+  font-weight: bold;
 }
 .potpis{
   text-align:right;
