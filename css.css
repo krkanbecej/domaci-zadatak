@@ -8,6 +8,7 @@ h3 {
 
 h2{
   color:#f6f31d;
+  text-shadow: 0 8px #2d1f0f;
 }
 .zaglavlje{
   background: linear-gradient(purple,blue);
@@ -36,5 +37,6 @@ h2{
   text-align:right;
 }
 b{
-  color: #111111;
+  color: #a6b2e7;
+  
 }
