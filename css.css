@@ -3,7 +3,7 @@ body{
   font-family: georgia;
 }
 h3 {
-  color:#333;
+  color:#3b4350;
 }
 
 h2{
@@ -11,8 +11,8 @@ h2{
   text-shadow: 0 8px #2d1f0f;
 }
 .zaglavlje{
-  background: linear-gradient(purple,blue);
-  border-radius: 15px;
+  background: linear-gradient(#ada7b1,#43535a);
+  border-radius: 25px;
   height: auto;
   padding-top: 30px;
   padding-bottom: 10px;
@@ -23,11 +23,13 @@ h2{
   font-weight: bold;
 }
 .telo{
+height:80%;
+margin: 0 auto;
   background-color: grey;
   color: #fff;
-  border-radius: 15px;
+  border-radius: 25px;
   padding:80px;
-  margin-top: 5px;
+  margin-top: 25px;
   text-align: justify;
   font-size: 30px;
   font-style: italic;
@@ -35,6 +37,7 @@ h2{
 }
 .potpis{
   text-align:right;
+  color:#f6f31d;
 }
 b{
   color: #a6b2e7;
