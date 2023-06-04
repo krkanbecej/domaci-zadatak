@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+</head>
+<body>
+    <textarea>
+//statistika
+        private void Statistika_Load(object sender, EventArgs e)
+        {
+            konekcija.ConnectionString = "Server=192.168.10.21; UserName=22karapandza; Password=123; DataBase=22karapandza_aa2";
+            komanda.Connection = konekcija;
+            adapter.SelectCommand = komanda;
+
+            try
+            {
+                konekcija.Open();
+
+                komanda.CommandText = "select concat(Ime, ' ', Prezime) as imeprezime, AutorID from autor group by prezime;";
+
+                adapter.Fill(cb);
+
+                comboBox1.DataSource = cb;
+                comboBox1.ValueMember = "AutorID";
+                comboBox1.DisplayMember = "imeprezime";
+
+                dataGridView1.DataSource = dgv;
+            }
+            catch (Exception ee)
+            {
+                MessageBox.Show("Greska" + ee.Message);
+            }
+            finally
+            {
+                konekcija.Close();
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                konekcija.Open();
+
+                komanda.CommandText = "select year(DatumUzimanja) as 'godina', count(nacitanju.KnjigaID) as 'broj' from nacitanju, napisali where napisali.KnjigaID=nacitanju.KnjigaID and napisali.AutorID=" + comboBox1.SelectedValue.ToString() + " and year(DatumUzimanja) between (year(now())-" + numericUpDown1.Value.ToString() + ") and year(now()) group by Godina";
+
+                dgv.Clear();
+
+                adapter.Fill(dgv);
+
+                chart1.DataSource = dgv;
+
+                chart1.Series[0].XValueMember = "godina";
+                chart1.Series[0].YValueMembers = "broj";
+
+                chart1.DataBind();
+            }
+            catch (Exception ee)
+            {
+                MessageBox.Show("Greska" + ee.Message);
+            }
+            finally
+            {
+                konekcija.Close();
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+    }
+
+//form1
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            konekcija.ConnectionString = "Server=192.168.10.21; UserName=22karapandza; Password=123; DataBase=22karapandza_aa2";
+            komanda.Connection = konekcija;
+            adapter.SelectCommand = komanda;
+
+            try
+            {
+                konekcija.Open();
+
+                komanda.CommandText = "select * from autor";
+                adapter.Fill(lv);
+
+                for (int i = 0; i < lv.Rows.Count; i++)
+                {
+                    ListViewItem lvi = new ListViewItem(lv.Rows[i][0].ToString());
+
+                    for (int j = 1; j < lv.Columns.Count; j++)
+                    {
+                        lvi.SubItems.Add(lv.Rows[i][j].ToString());
+                    }
+
+                    listView1.Items.Add(lvi);
+                }
+            }
+            catch (Exception ee)
+            {
+                MessageBox.Show("Greska" + ee.Message);
+            }
+            finally
+            {
+                konekcija.Close();
+            }
+        }
+
+        private void izlazToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void listView1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (listView1.SelectedIndices.Count > 0)
+            {
+                int i = listView1.SelectedIndices[0];
+
+                textBox1.Text = lv.Rows[i][0].ToString();
+                textBox2.Text = lv.Rows[i][1].ToString();
+                textBox3.Text = lv.Rows[i][2].ToString();
+                textBox4.Text = lv.Rows[i][3].ToString();
+            }
+            else
+            {
+                textBox1.Clear();
+                textBox2.Clear();
+                textBox3.Clear();
+                textBox4.Clear();
+            }
+        }
+
+        private void brisanjeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                konekcija.Open();
+
+                komanda.CommandText = "select * from napisali where AutorID=" + textBox1.Text;
+                dt.Clear();
+                adapter.Fill(dt);
+
+                if (dt.Rows.Count > 0)
+                {
+                    MessageBox.Show("Brisanje nije uspelo");
+                }
+                else
+                {
+                    komanda.CommandText = "delete from autor where AutorID=" + textBox1.Text;
+
+                    if (komanda.ExecuteNonQuery() > 0)
+                    {
+
+                        MessageBox.Show("Uspesno ste obrisali");
+
+                        komanda.CommandText = "select * from autor";
+                        lv.Clear();
+                        adapter.Fill(lv);
+
+                        listView1.Items.Clear();
+                        for (int i = 0; i < lv.Rows.Count; i++)
+                        {
+                            ListViewItem lvi = new ListViewItem(lv.Rows[i][0].ToString());
+
+                            for (int j = 1; j < lv.Columns.Count; j++)
+                            {
+                                lvi.SubItems.Add(lv.Rows[i][j].ToString());
+                            }
+
+                            listView1.Items.Add(lvi);
+                        }
+                    }
+                }
+            }
+            catch (Exception ee)
+            {
+                MessageBox.Show("Greska" + ee.Message);
+            }
+            finally
+            {
+                konekcija.Close();
+            }
+        }
+
+        private void analizaToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Statistika f = new Statistika();
+            f.Show();
+        }
+
+        private void oAplikacijiToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Info f = new Info();
+            f.Show();
+        }
+
+//create table format_knjige(FormatKnigeID int not null primary key, FormatID int not null, KnjigaID int not null);
+//create table format(FormatID int not null primary key, TipFormata varchar(100));
+//alter table citalac add column(DatumPlacanja date);
+//alter table citalac add check(DatumPlacanja>=now());
+//alter table format_knjige add FOREIGN key(FormatID) REFERENCES format(FormatID);
+//alter table format_knjige add FOREIGN key(KnjigaID) REFERENCES knjiga(KnjigaID);
+
+</textarea>
+</body>
+</html>

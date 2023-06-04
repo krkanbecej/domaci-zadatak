@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+</head>
+<body>
+    <textarea>
+//form1
+        private void pictureBox5_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+            Pretraga f = new Pretraga();
+            f.Show();
+        }
+
+        private void pictureBox3_Click(object sender, EventArgs e)
+        {
+            Statistika f = new Statistika();
+            f.Show();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            konekcija.ConnectionString = "Server=192.168.10.21; Database=22karapandza_aa12; UserName=22karapandza; Password=123";
+            komanda.Connection = konekcija;
+            da.SelectCommand = komanda;
+
+            try
+            {
+
+                konekcija.Open();
+
+                //komanda.CommandText = "select StadionID, Naziv, Grad.grad, Kapacitet, Adresa, BrojUlaza from stadion, grad where grad.GradID=stadion.GradID";
+                //da.Fill(lv);
+
+                //for (int i = 0; i < lv.Rows.Count; i++)
+                //{
+                //    ListViewItem lvi = new ListViewItem(lv.Rows[i][0].ToString());
+
+                //    for (int j = 1; j < lv.Columns.Count; j++)
+                //    {
+                //        lvi.SubItems.Add(lv.Rows[i][j].ToString());
+                //    }
+                //    listView1.Items.Add(lvi);
+                //}
+
+                komanda.CommandText = "SELECT * FROM Grad";
+
+                da.Fill(cb);
+
+                comboBox1.ValueMember = "GradID";
+                comboBox1.DisplayMember = "Grad";
+                comboBox1.DataSource = cb;
+            }
+            catch (Exception ee)
+            {
+                MessageBox.Show("Greska" + ee.Message);
+            }
+            finally
+            {
+                konekcija.Close();
+            }
+        }
+
+        private void listView1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (listView1.SelectedIndices.Count > 0)
+            {
+
+                int i = listView1.SelectedIndices[0];
+
+                textBox1.Text = lv.Rows[i][0].ToString();
+                textBox2.Text = lv.Rows[i][1].ToString();
+                textBox3.Text = lv.Rows[i][4].ToString();
+
+                numericUpDown1.Value = Convert.ToInt32(lv.Rows[i][3]);
+                numericUpDown2.Value = Convert.ToInt32(lv.Rows[i][5]);
+
+                comboBox1.Text = lv.Rows[i][2].ToString();
+            }
+            else
+            {
+                textBox1.Clear();
+                textBox2.Clear();
+                comboBox1.ResetText();
+                numericUpDown1.Value = 0;
+                numericUpDown2.Value = 0;
+            }
+        }
+
+        private void pictureBox2_Click(object sender, EventArgs e)
+        {
+
+            if (textBox1.Text != "" && textBox2.Text != "" && textBox3.Text != "" && numericUpDown1.Value >= 0 && numericUpDown2.Value >= 0)
+            {
+                try
+                {
+                    konekcija.Open();
+                    komanda.CommandText = "update stadion set Naziv='" + textBox2.Text + "', Adresa='" + textBox3.Text + "', Kapacitet='" + numericUpDown1.Value + "', BrojUlaza='" + numericUpDown2.Value + "' where StadionID=" + textBox1.Text;
+
+                    if (komanda.ExecuteNonQuery() > 0)
+                    {
+                        MessageBox.Show("Uspesno");
+
+                        komanda.CommandText = "select StadionID, Naziv, Grad.grad, Kapacitet, Adresa, BrojUlaza from stadion, grad where grad.GradID=stadion.GradID";
+                        lv.Clear();
+                        da.Fill(lv);
+
+                        listView1.Items.Clear();
+                        for (int i = 0; i < lv.Rows.Count; i++)
+                        {
+                            ListViewItem item = new ListViewItem(lv.Rows[i][0].ToString());
+
+                            for (int j = 1; j < lv.Columns.Count; j++)
+                            {
+                                item.SubItems.Add(lv.Rows[i][j].ToString());
+                            }
+                            listView1.Items.Add(item);
+                        }
+                    }
+                }
+                catch (Exception ee)
+                {
+                    MessageBox.Show("Greska" + ee.Message);
+                }
+                finally
+                {
+                    konekcija.Close();
+                }
+            }
+            else
+            {
+                MessageBox.Show("Popunite sva polja");
+            }
+        }
+
+        private void Form1_Activated(object sender, EventArgs e)
+        {
+            try
+            {
+                konekcija.Open();
+
+                if (Klasa1.drzava == "")
+                {
+                    komanda.CommandText = "select StadionID, Naziv, Grad.grad, Kapacitet, Adresa, BrojUlaza from stadion, grad where grad.GradID=stadion.GradID";
+                }
+                else
+                {
+                    komanda.CommandText = "select StadionID, stadion.Naziv, Grad.grad, Kapacitet, Adresa, BrojUlaza from stadion, grad, drzava where grad.GradID=stadion.GradID and grad.DrzavaID=drzava.DrzavaID and drzava.Naziv ='" + Klasa1.drzava + "'";
+                }
+
+                lv.Clear();
+                da.Fill(lv);
+
+                listView1.Items.Clear();
+                for (int i = 0; i < lv.Rows.Count; i++)
+                {
+                    ListViewItem item = new ListViewItem(lv.Rows[i][0].ToString());
+
+                    for (int j = 1; j < lv.Columns.Count; j++)
+                    {
+                        item.SubItems.Add(lv.Rows[i][j].ToString());
+                    }
+                    listView1.Items.Add(item);
+                }
+
+            }
+            catch (Exception ee)
+            {
+                MessageBox.Show("Greska" + ee.Message);
+            }
+            finally
+            {
+                konekcija.Close();
+            }
+        }
+
+//klasa1
+class Klasa1
+    {
+        public static string drzava = "";
+    }
+
+//pretraga
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Klasa1.drzava = textBox1.Text;
+            Application.OpenForms["Form1"].Activate();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            Klasa1.drzava = "";
+            Application.OpenForms["Form1"].Activate();
+            Close();
+        }
+
+//statistika
+        private void Statistika_Load(object sender, EventArgs e)
+        {
+            konekcija.ConnectionString = "Server=192.168.10.21; Database=22karapandza_aa12; UserName=22karapandza; Password=123";
+            komanda.Connection = konekcija;
+            da.SelectCommand = komanda;
+
+            try
+            {
+                konekcija.Open();
+
+                komanda.CommandText = "select Naziv, count(UtakmicaID) as 'Broj' from stadion, klub, utakmica where stadion.StadionID=klub.StadionID and klub.KlubID=utakmica.DomacinID and DatumIgranja like concat(year(now())-1, '-%') group by stadion.StadionID limit 10";
+
+                da.Fill(chart);
+
+                chart1.DataSource = chart;
+                chart1.Series[0].XValueMember = "Naziv";
+                chart1.Series[0].YValueMembers = "Broj";
+
+                chart1.DataBind();
+            }
+            catch (Exception ee)
+            {
+                MessageBox.Show("Greska" + ee.Message);
+            }
+            finally
+            {
+                konekcija.Close();
+            }
+        }
+
+//create table igrac(IgracID int not null primary key, Ime varchar(30) not null, Prezime varchar(30) not null, DatumRodjenja date, 
+//DrzavaID int not null REFERENCES drzava(DrzavaID));
+
+//create table klubigrac(KlubIgracID int not null primary key, IgracID int not null REFERENCES igrac(IgracID), 
+//KlubID int not null REFERENCES klub(KlubID), 
+//DatumPocetka date not null, 
+//DatumKraja date, check (DatumKraja>DatumPocetka));
+
+</textarea>
+</body>
+</html>

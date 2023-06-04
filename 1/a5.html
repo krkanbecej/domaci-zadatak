@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+</head>
+<body>
+    <textarea>
+//form1
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            konekcija.ConnectionString = "Server=192.168.10.21; Database=22karapandza_aa5; UserName=22karapandza; Password=123";
+            komanda.Connection = konekcija;
+            da.SelectCommand = komanda;
+
+            try
+            {
+                konekcija.Open();
+
+                komanda.CommandText = "SELECT * from aktivnosti";
+                da.Fill(lv);
+
+                for (int i = 0; i < lv.Rows.Count; i++)
+                {
+                    ListViewItem lvi = new ListViewItem(lv.Rows[i][0].ToString());
+
+                    for (int j = 1; j < lv.Columns.Count; j++)
+                    {
+                        lvi.SubItems.Add(lv.Rows[i][j].ToString());
+                    }
+                    listView1.Items.Add(lvi);
+                }
+//combobox popunjavamo sa forme
+            }
+            catch
+            {
+                MessageBox.Show("Greska");
+            }
+            finally
+            {
+                konekcija.Close();
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void oAplikacijiToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            Form3 f3 = new Form3();
+            f3.Show();
+        }
+
+        private void listView1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (listView1.SelectedIndices.Count > 0)
+            {
+
+                int i = listView1.SelectedIndices[0];
+
+                textBox1.Text = lv.Rows[i][0].ToString();
+                textBox2.Text = lv.Rows[i][1].ToString();
+                comboBox1.Text = lv.Rows[i][2].ToString();
+                textBox3.Text = lv.Rows[i][3].ToString();
+                textBox4.Text = lv.Rows[i][4].ToString();
+            }
+            else
+            {
+                textBox1.Clear();
+                textBox2.Clear();
+                comboBox1.Text = "";
+                textBox3.Clear();
+                textBox4.Clear();
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                uint sifra;
+
+                if (uint.TryParse(textBox1.Text, out sifra))
+                {
+
+                    konekcija.Open();
+
+                    komanda.CommandText = "insert into aktivnosti(AktivnostiID, NazivAktivnosti, Dan, Pocetak, Zavrsetak) values (" + textBox1.Text + ",'" + textBox2.Text + "','" + comboBox1.Text + "','" + textBox3.Text + "','" + textBox4.Text + "')";
+//dodati default vrednost za nastavnikID u bazi edit->default as defined 1->go
+                    if (komanda.ExecuteNonQuery() > 0)
+                    {
+                        MessageBox.Show("Uspesno");
+
+                        komanda.CommandText = "SELECT * from aktivnosti";
+                        lv.Clear();
+                        da.Fill(lv);
+
+                        listView1.Items.Clear();
+
+                        for (int i = 0; i < lv.Rows.Count; i++)
+                        {
+                            ListViewItem lvi = new ListViewItem(lv.Rows[i][0].ToString());
+
+                            for (int j = 1; j < lv.Columns.Count; j++)
+                            {
+                                lvi.SubItems.Add(lv.Rows[i][j].ToString());
+                            }
+                            listView1.Items.Add(lvi);
+                        }
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Unesite pozitivan ceo broj");
+                }
+            }
+            catch(Exception ee)
+            {
+                MessageBox.Show("Greska" + ee.Message);
+            }
+            finally
+            {
+                konekcija.Close();
+            }
+        }
+
+//statistika
+        private void button2_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+//chart komponenta -> series -> label true, series -> skroz dole otvorimo da nadjemo cilidar za izgled
+        private void Form2_Load(object sender, EventArgs e)
+        {
+            konekcija.ConnectionString = "Server=192.168.10.21; Database=22karapandza_aa5; UserName=22karapandza; Password=123";
+            komanda.Connection = konekcija;
+            da.SelectCommand = komanda;           
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                konekcija.Open();
+
+                dataGridView1.DataSource = dgv;
+
+                komanda.CommandText = "select 'Ponedeljak' as 'Dan', count(DeteID) as 'Broj dece' from aktivnosti, registar_aktivnosti where aktivnosti.AktivnostiID=registar_aktivnosti.AktivnostiID and Prisustvo=1 and Dan='Ponedeljak' union all " +
+                                      "select 'Utorak' as 'Dan', count(DeteID) as 'Broj dece' from aktivnosti, registar_aktivnosti where aktivnosti.AktivnostiID=registar_aktivnosti.AktivnostiID and Prisustvo=1 and Dan='Utorak' union all " +
+                                      "select 'Sreda' as 'Dan', count(DeteID) as 'Broj dece' from aktivnosti, registar_aktivnosti where aktivnosti.AktivnostiID=registar_aktivnosti.AktivnostiID and Prisustvo=1 and Dan='Sreda' union all " +
+                                      "select 'Cetvrtak' as 'Dan', count(DeteID) as 'Broj dece' from aktivnosti, registar_aktivnosti where aktivnosti.AktivnostiID=registar_aktivnosti.AktivnostiID and Prisustvo=1 and Dan='Cetvrtak' union all " +
+                                      "select 'Petak' as 'Dan', count(DeteID) as 'Broj dece' from aktivnosti, registar_aktivnosti where aktivnosti.AktivnostiID=registar_aktivnosti.AktivnostiID and Prisustvo=1 and Dan='Petak' union all " +
+                                      "select 'Subota' as 'Dan', count(DeteID) as 'Broj dece' from aktivnosti, registar_aktivnosti where aktivnosti.AktivnostiID=registar_aktivnosti.AktivnostiID and Prisustvo=1 and Dan='Subota' union all " +
+                                      "select 'Nedelja' as 'Dan', count(DeteID) as 'Broj dece' from aktivnosti, registar_aktivnosti where aktivnosti.AktivnostiID=registar_aktivnosti.AktivnostiID and Prisustvo=1 and Dan='Nedelja'";
+
+                dgv.Clear();
+                da.Fill(dgv);
+
+                chart1.DataSource = dgv;
+
+                chart1.Series[0].XValueMember = "Dan"; //isVisibleLegend u series collection na true
+                chart1.Series[0].YValueMembers = "Broj dece";
+
+                chart1.DataBind();
+
+                konekcija.Close();
+            }
+            catch (Exception ee)
+            {
+                MessageBox.Show("Greska " + ee.Message);
+            }
+            finally
+            {
+                konekcija.Close();
+            }
+        }
+    }
+}
+//create table nastavnik(NastavnikID int(11)not null primary key, Ime varchar(100), Prezime varchar(100));
+//alter table aktivnosti add column NastavnikID int(11) not null REFERENCES nastavnik(NastavnikID);
+//alter table dete add column DatumPrijema date add check(DatumPrijema > DatumRodjenja);
+
+</textarea>
+</body>
+</html>

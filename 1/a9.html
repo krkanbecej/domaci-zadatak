@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+</head>
+<body>
+    <textarea>
+//form1
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            konekcija.ConnectionString = "Server=46.40.3.35; Database=22karapandza_a9; UserName=22karapandza; Password=123";
+            komanda.Connection = konekcija;
+            da.SelectCommand = komanda;
+
+            try
+            {
+                konekcija.Open();
+
+                komanda.CommandText = "select * from drzava";
+                da.Fill(drzava);
+
+                comboBox1.Items.Add("Sve drzave");
+
+                for (int i = 0; i < drzava.Rows.Count; i++)
+                {
+                    comboBox1.Items.Add(drzava.Rows[i][1]);
+                }
+                comboBox1.SelectedIndex = 0;
+            }
+            catch (Exception ee)
+            {
+                MessageBox.Show("Greska" + ee.Message);
+            }
+            finally
+            {
+                konekcija.Close();
+            }
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e) //dupli klik na combobox1
+        {
+            if (comboBox1.SelectedIndex != 0)
+            {
+                comboBox2.Enabled = true;
+
+                komanda.CommandText = "select Grad from grad, drzava where drzava.DrzavaID=grad.DrzavaID and Naziv='" + comboBox1.Text + "'";
+
+                grad.Clear();
+                da.Fill(grad);
+
+                comboBox2.Items.Clear();
+
+                comboBox2.Items.Add("Svi gradovi");
+
+                for (int i = 0; i < grad.Rows.Count; i++)
+                {
+                    comboBox2.Items.Add(grad.Rows[i][0]);
+                }
+                comboBox2.SelectedIndex = 0;
+            }
+            else
+            {
+                comboBox2.Items.Clear();
+                comboBox2.Text = "Svi gradovi";
+                comboBox2.Enabled = false;
+
+                comboBox3.Items.Clear();
+                comboBox3.Text = "Svi klubovi";
+                comboBox3.Enabled = false;
+
+                pictureBox1.Image = Image.FromFile("klubovi/fifa.jpg");
+                label6.Text = "Zürich";
+                label7.Text = "Switzerland";
+                linkLabel1.Text = "www.fifa.com";
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e) //dupli klik na combobox2
+        {
+            if (comboBox2.SelectedIndex != 0)
+            {
+                comboBox3.Enabled = true;
+
+                komanda.CommandText = "select NazivKluba from klub, stadion, grad where klub.StadionID=stadion.StadionID and grad.GradID=stadion.GradID and Grad='" + comboBox2.Text + "'";
+
+                klub.Clear();
+                da.Fill(klub);
+
+                comboBox3.Items.Clear();
+
+                comboBox3.Items.Add("Svi klubovi");
+
+                for (int i = 0; i < klub.Rows.Count; i++)
+                {
+                    comboBox3.Items.Add(klub.Rows[i][0]);
+                }
+                comboBox3.SelectedIndex = 0;
+            }
+            else
+            {
+                comboBox3.Items.Clear();
+                comboBox3.Text = "Svi gradovi";
+                comboBox3.Enabled = false;
+            }
+        }
+
+        private void comboBox3_SelectedIndexChanged(object sender, EventArgs e) //dupli klik na combobox3
+        {
+            if (comboBox3.SelectedIndex != 0) //folder klubovi->A9->bin->Debug paste
+            {
+                komanda.CommandText = "select Grad, Naziv, Sajt, Amblem from klub, stadion, grad where klub.StadionID=stadion.StadionID and grad.GradID=stadion.GradID and NazivKluba='" + comboBox3.Text + "' and Grad='" + comboBox2.Text + "'";
+                //amblem-link do slike
+
+                dt.Clear();
+                da.Fill(dt);
+
+                label6.Text = dt.Rows[0][0].ToString();
+                label7.Text = dt.Rows[0][1].ToString();
+                linkLabel1.Text = dt.Rows[0][2].ToString();
+
+                pictureBox1.Image = Image.FromFile(dt.Rows[0][3].ToString());
+
+            }
+            else
+            {
+                pictureBox1.Image = Image.FromFile("klubovi/fifa.jpg");
+                label6.Text = "Zürich";
+                label7.Text = "Switzerland";
+                linkLabel1.Text = "www.fifa.com";
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            comboBox1.SelectedIndex = 0;
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                konekcija.Open();
+
+                komanda.CommandText = "select Naziv, NazivKluba, GolovaDomacin, GolovaGost, (select NazivKluba from klub where KlubID=utakmica.GostID) from stadion, utakmica, klub where stadion.StadionID=klub.StadionID and klub.KlubID=utakmica.DomacinID and DatumIgranja='" + dateTimePicker1.Value.ToString("yyyy-MM-dd") + "';";
+
+                lv.Clear();
+                da.Fill(lv);
+
+                listView1.Items.Clear();
+                for (int i = 0; i < lv.Rows.Count; i++)
+                {
+                    ListViewItem lvi = new ListViewItem(lv.Rows[i][0].ToString());
+
+                    for (int j = 1; j < lv.Columns.Count; j++)
+                    {
+                        lvi.SubItems.Add(lv.Rows[i][j].ToString());
+                    }
+                    listView1.Items.Add(lvi);
+                }
+            }
+            catch (Exception ee)
+            {
+                MessageBox.Show("Greska" + ee.Message);
+            }
+            finally
+            {
+                konekcija.Close();
+            }
+            
+        }
+
+//create table igrac(IgracID int not null primary key, Ime varchar(30) not null, Prezime varchar(30) not null, DatumRodjenja date, 
+//DrzavaID int not null REFERENCES drzava(DrzavaID));
+
+//create table klubigrac(KlubIgracID int not null primary key, IgracID int not null REFERENCES igrac(IgracID), 
+//KlubID int not null REFERENCES klub(KlubID), 
+//DatumPocetka date not null, 
+//DatumKraja date, check (DatumKraja>DatumPocetka));
+
+</textarea>
+</body>
+</html>

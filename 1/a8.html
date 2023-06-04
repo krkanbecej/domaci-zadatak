@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+</head>
+<body>
+    <textarea>
+//tipantikviteta
+        MySqlCommand komanda = new MySqlCommand();
+        MySqlDataAdapter da = new MySqlDataAdapter();
+        MySqlConnection konekcija = new MySqlConnection();
+
+        DataTable dt = new DataTable();
+        int red = 0;
+        string putanja;
+        
+        private void TipAntikviteta_Load(object sender, EventArgs e)
+        {
+            konekcija.ConnectionString = "Server=192.168.10.21; Database=22karapandza_aa8; UserName=22karapandza; Password=123";
+            komanda.Connection = konekcija;
+            da.SelectCommand = komanda;
+
+            try
+            {
+                konekcija.Open();
+
+                komanda.CommandText = "select * from tip_antikviteta order by tip";
+
+                da.Fill(dt);
+
+                label2.Text = dt.Rows[red][0].ToString(); //dodati folder slike antikviteta u A8->A8->bin->debug
+                textBox1.Text = dt.Rows[red][1].ToString();
+
+                pictureBox1.Image = Image.FromFile(dt.Rows[red][2].ToString());
+
+                putanja = dt.Rows[red][2].ToString();
+            }
+            catch(Exception ee)
+            {
+                MessageBox.Show("Greska" + ee.Message);
+            }
+            finally
+            {
+                konekcija.Close();
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (red > 0)
+                {
+                    red--;
+
+                    label2.Text = dt.Rows[red][0].ToString();
+                    textBox1.Text = dt.Rows[red][1].ToString();
+
+                    pictureBox1.Image = Image.FromFile(dt.Rows[red][2].ToString());
+
+                    putanja = dt.Rows[red][2].ToString();
+                }
+                else
+                    button2.Enabled = false;
+
+                if (red != dt.Rows.Count - 1)
+                    button3.Enabled = true;
+            }
+            catch(Exception ee)
+            {
+                MessageBox.Show("Greska" + ee.Message);
+            }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (red < dt.Rows.Count - 1)
+                {
+                    red++;
+
+
+                    label2.Text = dt.Rows[red][0].ToString();
+                    textBox1.Text = dt.Rows[red][1].ToString();
+
+                    pictureBox1.Image = Image.FromFile(dt.Rows[red][2].ToString());
+
+                    putanja = dt.Rows[red][2].ToString();
+                }
+                else
+                    button3.Enabled = false;
+
+                if (red != 0) //ili red > 0
+                    button2.Enabled = true;
+            }
+            catch (Exception ee)
+            {
+                MessageBox.Show("Greska" + ee.Message);
+            }
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+            DialogResult rez = openFileDialog1.ShowDialog();
+
+            if (rez == DialogResult.OK)
+            {
+                putanja = "antikviteti/" + openFileDialog1.SafeFileName; //prevuci openfiledialog 
+
+                Image img = Image.FromFile(openFileDialog1.FileName);
+                img.Save(putanja); //kopiranje
+
+                pictureBox1.Image = img; //stavljanje u picturebox
+
+                //label3.Text = putanja;
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                konekcija.Open();
+                komanda.CommandText = "update tip_antikviteta set Tip='" + textBox1.Text + "', Slika='" + putanja + "' " + "where TipAntikvitetaID= " + label2.Text;
+
+                if (komanda.ExecuteNonQuery() > 0)
+                {
+                    MessageBox.Show("Uspesno!");
+
+                    komanda.CommandText = "select * from tip_antikviteta order by tip";
+                    dt.Clear();
+                    da.Fill(dt);
+                }
+            }
+            catch (Exception ee)
+            {
+                MessageBox.Show("Greska" + ee.Message);
+            }
+            finally
+            {
+                konekcija.Close();
+            }
+        }
+
+//statistika
+        private void Statistika_Load(object sender, EventArgs e)
+        {
+            konekcija.ConnectionString = "Server=192.168.10.21; Database=22karapandza_aa8; UserName=22karapandza; Password=123";
+            komanda.Connection = konekcija;
+            da.SelectCommand = komanda;
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                konekcija.Open();
+
+                dataGridView1.DataSource = dgv;
+
+                komanda.CommandText = "select Grad, count(AntikvitetID) as 'Broj otkrica' from antikvitet, grad, lokalitet where antikvitet.LokalitetID=lokalitet.LokalitetID and lokalitet.GradID=grad.GradID and year(DatumPronalska) > " + numericUpDown1.Value + " group by Grad having count(AntikvitetID)>" + numericUpDown2.Value;
+
+                dgv.Clear();
+                da.Fill(dgv);
+
+                chart1.DataSource = dgv;
+
+                chart1.Series[0].XValueMember = "Grad"; //isVisibleLegend u series collection na true
+                chart1.Series[0].YValueMembers = "Broj otkrica";
+
+                chart1.DataBind();
+            }
+            catch (Exception ee)
+            {
+                MessageBox.Show("Greska " + ee.Message);
+            }
+            finally
+            {
+                konekcija.Close();
+            }
+        }
+    }
+}
+//CREATE TABLE muzej(muzejID int not null PRIMARY KEY, gradID int not null, naziv varchar(30), sajt varchar(50), email varchar(50), telefon varchar(50));
+
+//INSERT INTO `muzej`(`muzejID`, `gradID`, `naziv`, `sajt`, `email`, `telefon`) VALUES ('1','1','[value-3]','[value-4]','[value-5]','[value-6]');
+
+//ALTER TABLE antikvitet add COLUMN (muzejID int not null)
+
+//**popuniti muzejID
+
+//ALTER TABLE antikvitet ADD FOREIGN KEY(muzejID) REFERENCES muzej(muzejID);
+//ALTER TABLE muzej ADD FOREIGN KEY(gradID) REFERENCES grad(gradID);
+</textarea>
+</body>
+</html>

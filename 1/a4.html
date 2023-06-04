@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+</head>
+<body>
+    <textarea>
+//form1
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            konekcija.ConnectionString = "server=192.168.10.21; username=22karapandza; password=123; database=22karapandza_a4;";
+            komanda.Connection = konekcija;
+            da.SelectCommand = komanda;
+
+            try
+            {
+                konekcija.Open();
+
+                komanda.CommandText = "select SeloID, Naziv, Grad from selo, grad where selo.GradID=grad.GradID order by SeloID";
+
+                da.Fill(lv);
+
+                for (int i = 0; i < lv.Rows.Count; i++)
+                {
+                    ListViewItem lvi = new ListViewItem(lv.Rows[i][0].ToString());
+
+                    for (int j = 1; j < lv.Columns.Count; j++)
+                    {
+                        lvi.SubItems.Add(lv.Rows[i][j].ToString());
+                    }
+
+                    listView1.Items.Add(lvi);
+                }
+
+                komanda.CommandText = "select * from grad order by grad";
+
+                da.Fill(cb);
+
+                comboBox1.DataSource = cb;
+                comboBox1.ValueMember = "GradID";
+                comboBox1.DisplayMember = "Grad";
+
+            }
+            catch (Exception ee)
+            {
+                MessageBox.Show("greska " + ee.Message);
+            }
+            finally
+            {
+                konekcija.Close();
+            }
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                konekcija.Open();
+
+                if (textBox1.Text != "")
+                {
+                    int sifra = Convert.ToInt32(textBox1.Text);
+
+                    komanda.CommandText = "select SeloID, Naziv, Grad from selo, grad where selo.GradID=grad.GradID and SeloID=" + textBox1.Text;
+                    dt.Clear();
+                    da.Fill(dt);
+
+                    if (dt.Rows.Count > 0)
+                    {
+                        textBox2.Text = dt.Rows[0][1].ToString();
+                        comboBox1.Text = dt.Rows[0][2].ToString();
+
+                        listView1.SelectedItems.Clear();
+
+                        listView1.FindItemWithText(textBox1.Text).Selected = true;
+                        listView1.Select();
+                    }
+                    else
+                    {
+                        textBox2.Clear();
+                        comboBox1.SelectedIndex = 0;
+                    }
+
+                }
+                else
+                {
+                    textBox2.Clear();
+                    comboBox1.SelectedValue = 0;
+                }
+            }
+            catch (FormatException)
+            {
+                MessageBox.Show("Sifra mora biti ceo broj");
+            }
+            catch (Exception ee)
+            {
+                MessageBox.Show("greska" + ee.Message);
+            }
+            finally
+            {
+                konekcija.Close();
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                konekcija.Open();
+
+                komanda.CommandText = "update selo set Naziv='" + textBox2.Text + "', GradID=" + comboBox1.SelectedValue + " where SeloID=" + textBox1.Text;
+
+                if (komanda.ExecuteNonQuery() > 0)
+                {
+                    MessageBox.Show("Uspesno");
+
+                    komanda.CommandText = "select SeloID, Naziv, Grad from selo, grad where selo.GradID=grad.GradID order by SeloID";
+                    lv.Clear();
+                    da.Fill(lv);
+
+                    listView1.Items.Clear();
+
+                    for (int i = 0; i < lv.Rows.Count; i++)
+                    {
+                        ListViewItem lvi = new ListViewItem(lv.Rows[i][0].ToString());
+
+                        for (int j = 1; j < lv.Columns.Count; j++)
+                        {
+                            lvi.SubItems.Add(lv.Rows[i][j].ToString());
+                        }
+
+                        listView1.Items.Add(lvi);
+                    }
+
+                }
+                else
+                {
+                    MessageBox.Show("sifra ne postoji");
+
+                    using (StreamWriter fajl = new StreamWriter("error.txt", true))
+                    {
+                        fajl.WriteLine(DateTime.Now + "--" + "sifra ne postoji");
+                    }
+                }
+            }
+            catch (Exception ee)
+            {
+                MessageBox.Show("greska" + ee.Message);
+
+                using (StreamWriter fajl = new StreamWriter("error.txt", true))
+                {
+                    fajl.WriteLine(DateTime.Now + "--" + ee.Message);
+                }
+            }
+            finally
+            {
+                konekcija.Close();
+            }
+        }
+
+//statistika
+        private void Statistika_Load(object sender, EventArgs e)
+        {
+            konekcija.ConnectionString = "server=192.168.10.21; username=22karapandza; password=123; database=22karapandza_a4;";
+            komanda.Connection = konekcija;
+            da.SelectCommand = komanda;
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                konekcija.Open();
+
+                komanda.CommandText = "select concat(Ime,'-', Prezime) as 'ime', count(rezervacija.KlijentID) as 'broj' from klijent, rezervacija where klijent.KlijentID=rezervacija.KlijentID and AktivanKlijent=1 group by ime having broj>" + numericUpDown1.Value;
+
+                dataGridView1.DataSource = dgv;
+
+                dgv.Clear();
+                da.Fill(dgv);
+            }
+            catch (Exception ee)
+            {
+                MessageBox.Show("greska " + ee.Message);
+            }
+            finally
+            {
+                konekcija.Close();
+            }   
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+//create table ponuda(PonudaID int not null primary key, Naziv varchar(100) not null);
+//create table ponuda_kucica(ID int not null primary key, PonudaID int not null REFERENCES ponuda(PonudaID), KucicaID int not null REFERENCES kucica(KucicaID), cenaOd double, cenaDo double
+//check(cenaOd manje CenaDo))
+
+</textarea>
+</body>
+</html>

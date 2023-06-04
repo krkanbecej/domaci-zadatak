@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+</head>
+<body>
+    <textarea>
+//form1
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            konekcija.ConnectionString = "Server=192.168.10.21; UserName=22karapandza; Password=123; DataBase=22karapandza_aa3;";
+            komanda.Connection = konekcija;
+            da.SelectCommand = komanda;
+
+            try
+            {
+                konekcija.Open();
+
+                komanda.CommandText = "select * from projekat";
+                da.Fill(lv);
+
+                for (int i = 0; i < lv.Rows.Count; i++)
+                {
+                    ListViewItem lvi = new ListViewItem(lv.Rows[i][0].ToString());
+
+                    for (int j = 1; j < lv.Columns.Count; j++)
+                    {
+                        lvi.SubItems.Add(lv.Rows[i][j].ToString());
+                    }
+
+                    listView1.Items.Add(lvi);
+                }
+
+            }
+            catch (Exception ee)
+            {
+                MessageBox.Show("Greska" + ee.Message);
+            }
+            finally
+            {
+                konekcija.Close();
+            }
+        }
+
+        private void pregledProjekataToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Statistika f = new Statistika();
+            f.Show();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void listView1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (listView1.SelectedIndices.Count > 0)
+            {
+                int i = listView1.SelectedIndices[0];
+
+                textBox1.Text = lv.Rows[i][0].ToString();
+                textBox2.Text = lv.Rows[i][1].ToString();
+                textBox3.Text = lv.Rows[i][2].ToString();
+                textBox4.Text = lv.Rows[i][3].ToString();
+                checkBox1.Checked = Convert.ToBoolean(lv.Rows[i][4]);
+                textBox5.Text = lv.Rows[i][5].ToString();
+            }
+            else
+            {
+                textBox1.Clear();
+                textBox2.Clear();
+                textBox3.Clear();
+                textBox4.Clear();
+                checkBox1.Checked = false;
+                textBox5.Clear();
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                konekcija.Open();
+
+                komanda.CommandText = "select year(DatumPocetka), ProjekatZavrsen, Naziv from projekat where ProjekatID=" + textBox1.Text;
+                dt.Clear();
+                da.Fill(dt);
+
+                if (dt.Rows.Count > 0)
+                {
+                    int godina = Convert.ToInt32(dt.Rows[0][0]);
+                    bool zavrsen = Convert.ToBoolean(dt.Rows[0][1]);
+
+                    if (godina < DateTime.Now.Year - 5 && zavrsen == true)
+                    {
+                        komanda.CommandText = "delete from angazman where ProjekatID=" + textBox1.Text + "; delete from projekat where ProjekatID=" + textBox1.Text;
+
+                        if (komanda.ExecuteNonQuery() > 0)
+                        {
+                            MessageBox.Show("Uspesno");
+
+                            string imefajla = "log_" + DateTime.Now.Day + "_" + DateTime.Now.Month + "_" + DateTime.Now.Year + ".txt";
+
+                            //upisati gore using system.IO
+                            using (StreamWriter fajl = new StreamWriter(imefajla, true))
+                            {
+                                fajl.WriteLine(textBox1.Text + " " + dt.Rows[0][2]);
+                            }
+
+                            komanda.CommandText = "select* from projekat";
+                            lv.Clear();
+                            da.Fill(lv);
+
+                            listView1.Items.Clear();
+                            for (int i = 0; i < lv.Rows.Count; i++)
+                            {
+                                ListViewItem lvi = new ListViewItem(lv.Rows[i][0].ToString());
+
+                                for (int j = 1; j < lv.Columns.Count; j++)
+                                {
+                                    lvi.SubItems.Add(lv.Rows[i][j].ToString());
+                                }
+
+                                listView1.Items.Add(lvi);
+                            }
+                        }
+
+                    }
+                    else
+                    {
+                        MessageBox.Show("projekat nije moguce obrisati jer je mladji od 5 godina ili nije zavrsen");
+                    }
+                }
+            }
+            catch (Exception ee)
+            {
+                MessageBox.Show("Greska" + ee.Message);
+            }
+            finally
+            {
+                konekcija.Close();
+            }
+        }
+//statistika
+        private void Statistika_Load(object sender, EventArgs e)
+        {
+            konekcija.ConnectionString = "Server=192.168.10.21; UserName=22karapandza; Password=123; DataBase=22karapandza_aa3;";
+            komanda.Connection = konekcija;
+            da.SelectCommand = komanda;
+        }
+
+        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                konekcija.Open();
+
+                komanda.CommandText = "select year(DatumPocetka) as 'Godina', count(ProjekatID) as 'Broj projekata', (select count(RadnikID) from angazman, projekat where angazman.ProjekatID=projekat.ProjekatID and year(DatumPocetka)=year(T.DatumPocetka)) as 'Broj radnika' from projekat as T where year(datumPocetka)>year(now())-" + numericUpDown1.Value + " group by Godina order by Godina";
+                dataGridView1.DataSource = dgv;
+
+                dgv.Clear();
+                da.Fill(dgv);
+
+                chart1.DataSource = dgv;
+
+                chart1.Series[0].XValueMember = "Godina";
+                chart1.Series[0].YValueMembers = "Broj Radnika";
+
+                chart1.DataBind();
+
+            }
+            catch (Exception ee)
+            {
+                MessageBox.Show("Greska" + ee.Message);
+            }
+            finally
+            {
+                konekcija.Close();
+            }
+        }
+
+//create table podizvodjac(PodizvodjacID int not null primary key, Naziv varchar(100));
+//create table angazovanje(AngazovanjeID int not null primary key, PodizvodjacID int not null, ProjekatID int not null, DatumPocetka date DEFAULT now(), DatumKraja date DEFAULT concat(year(now()), "-", "12-31"));
+//alter table angazovanje add FOREIGN key(ProjekatID) REFERENCES projekat(ProjekatID), add check(DatumPocetka manji DatumKraja); 
+//alter table angazovanje add FOREIGN key(PodizvodjacID) REFERENCES podizvodjac(PodizvodjacID);
+
+</textarea>
+</body>
+</html>
