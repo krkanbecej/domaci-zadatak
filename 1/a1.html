@@ -3,6 +3,196 @@
 <head>
 </head>
 <body>
-  <h3>ovde bi trebao da bude tekst </h3>
+ <p>
+        private void Form1_Load(object sender, EventArgs e)
+        {
+        konekcija.ConnectionString = "UserName=22karapandza; Password=123; Server=192.168.10.21; DataBase=22karapandza_a1";
+        komanda.Connection = konekcija;
+        adapter.SelectCommand = komanda;
+
+        try
+        {
+        konekcija.Open();
+
+        komanda.CommandText = "select * from citalac";
+
+        adapter.Fill(citaoci);
+
+        for (int i = 0; i < citaoci.Rows.Count; i++)
+        {
+        ListViewItem lvi = new ListViewItem(citaoci.Rows[i][0].ToString());
+
+        for (int j = 1; j < citaoci.Columns.Count; j++)
+        {
+        lvi.SubItems.Add(citaoci.Rows[i][j].ToString());
+        }
+
+        listView1.Items.Add(lvi);
+        }
+
+        komanda.CommandText = "select concat(CitalacID, '-', Ime, '-', Prezime) as imeprezime, CitalacID from citalac";
+        adapter.Fill(cb);
+
+        comboBox1.DataSource = cb;
+        comboBox1.DisplayMember = "imeprezime";
+        comboBox1.ValueMember = "CitalacID";
+
+        dataGridView1.DataSource = analiza;
+
+        numericUpDown2.Value = DateTime.Now.Year;
+        numericUpDown1.Value = DateTime.Now.Year - 10;
+        }
+        catch (Exception ee)
+        {
+        MessageBox.Show("Greska" + ee.Message);
+        }
+        finally
+        {
+        konekcija.Close();
+        }
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+        try
+        {
+        if (!konekcija.Ping())
+        konekcija.Open();
+
+        if (textBox1.Text != "")
+        {
+        int num = Convert.ToInt32(textBox1.Text);
+
+        komanda.CommandText = "select * from citalac where CitalacID=" + textBox1.Text;
+
+        dt.Clear();
+        adapter.Fill(dt);
+
+        if (dt.Rows.Count > 0)
+        {
+        textBox1.Text = dt.Rows[0][0].ToString();
+        textBox2.Text = dt.Rows[0][1].ToString();
+        textBox3.Text = dt.Rows[0][2].ToString();
+        textBox4.Text = dt.Rows[0][3].ToString();
+        textBox5.Text = dt.Rows[0][4].ToString();
+
+        button1.Enabled = false;
+        }
+        else
+        {
+        textBox2.Clear();
+        textBox3.Clear();
+        textBox4.Clear();
+        textBox5.Clear();
+
+        button1.Enabled = true;
+        }
+        }
+        else
+        {
+        textBox2.Clear();
+        textBox3.Clear();
+        textBox4.Clear();
+        textBox5.Clear();
+        }
+        }
+        catch (Exception ee)
+        {
+        MessageBox.Show("Greska" + ee.Message);
+        }
+        finally
+        {
+        konekcija.Close();
+        }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+        try
+        {
+        if(!konekcija.Ping())
+        konekcija.Open();
+
+        komanda.CommandText = "insert into citalac values(" + textBox1.Text + ",'" + textBox2.Text + "','" + textBox3.Text + "','" + textBox4.Text + "','" + textBox5.Text + "');";
+
+        if (komanda.ExecuteNonQuery() > 0)
+        {
+        MessageBox.Show("Uspesno! Broj clanske karte:" + textBox1.Text);
+
+        button1.Enabled = false;
+
+        komanda.CommandText = "select * from citalac";
+
+        citaoci.Clear();
+        adapter.Fill(citaoci);
+
+        listView1.Items.Clear();
+
+        for (int i = 0; i < citaoci.Rows.Count; i++)
+        {
+        ListViewItem lvi = new ListViewItem(citaoci.Rows[i][0].ToString());
+
+        for (int j = 1; j < citaoci.Columns.Count; j++)
+        {
+        lvi.SubItems.Add(citaoci.Rows[i][j].ToString());
+        }
+
+        listView1.Items.Add(lvi);
+        }
+        }
+        }
+        catch (Exception ee)
+        {
+        MessageBox.Show("Greska" + ee.Message);
+        }
+        finally
+        {
+        konekcija.Close();
+        }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+        try
+        {
+        if (!konekcija.Ping())
+        konekcija.Open();
+
+        komanda.CommandText = "select concat(Ime, ' ',Prezime) as 'citalac', year(DatumUzimanja) as 'Godina', count(KnjigaID) as 'Broj iznajmljivanja', (select count(KnjigaID) from nacitanju where DatumVracanja is null and nacitanju.CitalacID=" + comboBox1.SelectedValue.ToString() + " and year(DatumUzimanja)=Godina) as 'Nije vraceno' from nacitanju, citalac where nacitanju.CitalacID=citalac.CitalacID and nacitanju.CitalacID=" + comboBox1.SelectedValue.ToString() + " and year(DatumUzimanja) between " + numericUpDown1.Value.ToString() + " and " + numericUpDown2.Value.ToString() + " group by year(DatumUzimanja) order by year(DatumUzimanja);";
+
+        analiza.Clear();
+        adapter.Fill(analiza);
+
+        chart1.DataSource = analiza;
+        chart1.Series[0].XValueMember = "Godina";
+        chart1.Series[0].YValueMembers = "Broj iznajmljivanja";
+
+        chart1.Series[1].XValueMember = "Godina";
+        chart1.Series[1].YValueMembers = "Nije vraceno";
+
+        chart1.DataBind();
+
+        }
+        catch (Exception ee)
+        {
+        MessageBox.Show("Greska" + ee.Message);
+        }
+        finally
+        {
+        konekcija.Close();
+        }
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+        Application.Exit();
+        }
+        }
+
+        //CREATE TABLE ogranak(OgranakID int NOT NULL PRIMARY KEY, Naziv VARCHAR(50) NOT NULL);
+        //ALTER TABLE primerak ADD OgranakID int not null, ADD DatumNabavke date;
+        //ALTER TABLE primerak ADD FOREIGN KEY (OgranakID) REFERENCES ogranak (OgranakID);
+        //ALTER TABLE primerak ADD CHECK (DatumNabavke > '2000-01-01')
+    </p>
 </body>
 </html>
