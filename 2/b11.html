@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+</head>
+<body>
+    <textarea>
+
+//index
+<h1>Turisticka agencija "Planinar"</h1>
+
+    <div id="menu">
+    <ul>
+    <li><a href="Index.html">Pocetna</a></li>
+    <li><a href="Oautoru.html">O autoru</a></li>
+    <li><a href="Uputstvo.html">Uputstvo</a></li>
+        </ul>
+    </div>
+
+    <center>
+<!--    <div id="izaberigrad">-->
+        <!--<form name="form1" id="form1" action="/action_page.php">-->
+    <p>Izaberite grad: 
+    <select name="grad" id="grad" onchange="IzabranGrad(this)">
+    <option value="beograd">Beograd</option>
+    <option value="novi-sad">Novi Sad</option>
+    <option value="nis">Nis</option>
+    <option value="loznica">Loznica</option>
+    <option value="vrbas">Vrbas</option>
+    <option value="kikinda">Kikinda</option>
+    <option value="subotica">Subotica</option>
+    <option value="jagodina">Jagodina</option>
+    <option value="novi-pazar">Novi Pazar</option>
+    <option value="zrenjanin">Zrenjanin</option>
+            </select> 
+        <!--</form>-->
+<!--    </div>-->
+    <br /></p>
+
+    <iframe id="link" src="https://naslovi.net/vremenska-prognoza/beograd" height="600" width="450"></iframe>
+
+    </center>
+
+//javascript
+function IzabranGrad() {
+    var tekst = document.getElementById("grad");
+    grad = tekst.value;
+    var IzabraniGrad = document.getElementById("link");
+    IzabraniGrad.parentElement.style.display = "block";
+    IzabraniGrad.src = "https://naslovi.net/vremenska-prognoza/" + grad;
+    window.open(grad + '.html', 'name', 'top=200,left=200,width=300,height=200');//naziv html strane za grad mora biti isti kao i naziv grada
+}
+
+//css
+body {
+    background-image: url('../img/background.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+	background-attachment: fixed;
+    color: whitesmoke;
+    font-size:24px;
+}
+h1 {
+    color: #e19721;
+    font-size: 50px;
+    text-align: center;
+    text-shadow: 2px 2px 2px gray;
+}
+
+#menu {
+    text-align: center;
+}
+    #menu ul {
+        list-style-type: none;
+        display:inline-block;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background-color: white;
+    }
+    #menu li {
+        display:inline-block;
+        list-style-type:none;
+    }
+        #menu li a {
+            display: block;
+            color: #5894c1;
+            font-size:30px;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+            #menu li a:hover {
+                background-color: #e19721;
+                color: white;
+            }
+
+#frame {
+    height: 600px;
+    width: 300px;
+    display:block;
+}
+
+p {
+color:white;
+font-size:24px;
+}
+
+#ime {
+    color:whitesmoke;
+    font-size:24px;
+}
+
+</textarea>
+
+
+</body>
+</html>

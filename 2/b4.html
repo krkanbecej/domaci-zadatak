@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+</head>
+<body>
+	<textarea>
+
+//index
+<h1>??????</h1>
+	<center>
+	<a class="button" href="index.html">???????</a>
+	<a class="button" href="oautoru.html">? ??????</a>
+	<a class="button" href="uputstvo.html">????????</a>
+	
+	
+	<br><br><br>
+
+	<table>
+	<tr>
+	<th>
+	<div class="box" style="background-color:green" height="500px" width="400px">
+	<img id="slika" src="assets/img/slika1.jpg" height="350px" width="250px">
+				</div>
+			</th>
+	<th bgcolor="lime">
+	<div class="box" style="background-color:green" height="500px" width="400px">
+	<iframe id="frame" src="assets/text/1.html" title="Slika 1" height="350px" width="250px" frameborder="0" marginheight="20" marginwidth="35" scrolling="auto"></iframe>
+				</div>
+			</th>
+		</tr>
+	</table>
+	
+	<br>
+	
+	<div class="circleBase circle1" id="c1" style="background: green;" onclick="selectImage(1)"></div>
+	<div class="circleBase circle1" id="c2" onclick="selectImage(2)"></div>
+	<div class="circleBase circle1" id="c3" onclick="selectImage(3)"></div>
+	<div class="circleBase circle1" id="c4" onclick="selectImage(4)"></div>
+	<div class="circleBase circle1" id="c5" onclick="selectImage(5)"></div>
+	
+	</center>
+	
+//uputstvo
+<h1>??????</h1>
+	<center>
+	<a class="button" href="index.html">???????</a>
+	<a class="button" href="oautoru.html">? ??????</a>
+	<a class="button" href="uputstvo.html">????????</a>
+	
+	
+	<br><br><br>
+	
+	?? ???????? ???????? ?? ?????? ????? ?? ???? ?? ??????? ????? ????? ?? ?????? ? 
+	?????????? ????????? ?? 3 ???????. 
+	<br>????? ??????? ???????? ????? ? ???? ????????? 
+	?? ?????? ???? ?????. 
+	<br>????? ????? ???? ?? ???????? ????????? ?????? ?? ????????? ? ???? 
+	??????? ???? ????????? ???? ????? ? ???? ?? ???????? ?????????. 
+	<br>?? ?????? ????? ????? ????????? ?? ? ?????? ? ???????? ????? (?????, 
+	??????, ?????? ???? ? ??????). 
+	<br>?????? ?? ?????? ???? ?? ????? ???? ???????? ?????? ????? ???????.
+	
+	</center>
+//javascript
+var id = 1;
+var element = document.getElementById("slika");
+var timer;
+
+setInterval(metoda, 3000);
+
+function metoda()
+{
+if(id < 5)
+{
+document.getElementById("c" + id).style.backgroundColor = "grey";
+id++;
+document.getElementById("c" + id).style.backgroundColor = "green";
+}
+else
+{
+document.getElementById("c1").style.backgroundColor = "green";
+document.getElementById("c2").style.backgroundColor = "grey";
+document.getElementById("c3").style.backgroundColor = "grey";
+document.getElementById("c4").style.backgroundColor = "grey";
+document.getElementById("c5").style.backgroundColor = "grey";
+id = 1;
+}
+	document.getElementById("slika").src = "assets/img/slika" + id + ".jpg";
+	document.getElementById("slika").style.opacity = 0.1;
+	
+	document.getElementById("frame").src = "assets/text/" + id + ".html";
+	fade(element);
+}
+
+function selectImage(imgid)
+{
+	document.getElementById("c" + id).style.backgroundColor = "grey";
+	id = imgid;
+	document.getElementById("c" + id).style.backgroundColor = "green";
+	
+	document.getElementById("slika").src = "assets/img/slika" + id + ".jpg";
+	document.getElementById("slika").style.opacity = 0.1;
+	
+	document.getElementById("frame").src = "assets/text/" + id + ".html";
+	
+	fade(element);
+}
+
+function fade(el)
+{
+	clearInterval(timer);
+	var op = 0.1;
+    timer = setInterval(function () {
+        if (op >= 1){
+            clearInterval(timer);
+        }
+		
+        element.style.opacity = op;
+        element.style.filter = 'alpha(opacity=' + op * 100 + ")";
+		
+        op += 0.02;
+    }, 50);
+}
+
+//cssbody
+{
+	background-color: #FFFF8D;
+	
+	font-family: Didot, serif;
+}
+
+h1 {
+  font-size: 30px;
+  text-align: center;
+  text-shadow: 1px 1px 1px grey;
+}
+
+@-webkit-keyframes glow {
+  from {
+    text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #e60073, 0 0 40px #e60073, 0 0 50px #e60073, 0 0 60px #e60073, 0 0 70px #e60073;
+  }
+  
+  to {
+    text-shadow: 0 0 20px #fff, 0 0 30px #ff4da6, 0 0 40px #ff4da6, 0 0 50px #ff4da6, 0 0 60px #ff4da6, 0 0 70px #ff4da6, 0 0 80px #ff4da6;
+  }
+}
+
+.button {
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+}
+
+.image1 {
+	border: 1px solid #000000;
+	z-index: 1;
+	}
+.image2 {
+	position: absolute;
+	z-index: 2;
+	}
+
+td, th {
+  border: 2px solid black;
+  text-align: left;
+  padding: 2px;
+}
+
+.circleBase {
+        border-radius: 50%;
+      }
+      .circle1 {
+        width: 15px;
+        height: 15px;
+        background: grey;
+display: inline-block;
+      }
+
+//nazivi odvojenih html strana 1,2,3... slike slika1, slika2...
+
+    </textarea>
+
+
+</body>
+</html>

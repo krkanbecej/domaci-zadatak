@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+</head>
+<body>
+    <textarea>
+
+//index
+<h1>???? ????????</h1>
+
+<ul style="background-color: 2b5480;">
+    <li><a href="index.html">???????</a></li>
+    <li><a href="autor.html">? ??????</a></li>
+    <li><a href="uputstvo.html">????????</a></li>
+    <br />
+</ul>
+<div class="container">
+<div id="text">
+<iframe id="textbox" src="text/9.html" style="background-color: 2b5480;" width="635px" marginwidth="30" scrolling="yes"></iframe>
+</div>
+    <img src="slike/slika9.jpg" class="center" id="big">
+<br>
+    <img src="slike/slika1.jpg" class="little" onclick="prikazi(1)">
+    <img src="slike/slika2.jpg" class="little" onclick="prikazi(2)">
+    <img src="slike/slika3.jpg" class="little" onclick="prikazi(3)">
+    <img src="slike/slika4.jpg" class="little" onclick="prikazi(4)">
+    <img src="slike/slika5.jpg" class="little" onclick="prikazi(5)">
+    <img src="slike/slika6.jpg" class="little" onclick="prikazi(6)">
+    <img src="slike/slika7.jpg" class="little" onclick="prikazi(7)">
+    <img src="slike/slika8.jpg" class="little" onclick="prikazi(8)">
+    <img src="slike/slika9.jpg" class="little" onclick="prikazi(9)">
+</div>
+//uputstvo
+<h1>???? ????????</h1>
+
+<ul style="background-color: 2b5480;">
+    <li><a href="index.html">???????</a></li>
+    <li><a href="autor.html">? ??????</a></li>
+    <li><a href="uputstvo.html">????????</a></li>
+    <br>
+
+</ul>
+
+    <p>?? ??????? ????????? ?? ?????? ????? ? ?????????? ???????? ????? ?? ????????.//opis sta radi sajt
+    <br>
+	????????? ?? ???? ????? - ???? ?? ?????? ????? ?? ?????????.
+    <br>
+	????? ????? ???? ????? ???? ?? ???????.
+    <br>
+	????????? ?? ????? "???????" ?????? ?? ??????? ??????.
+    <br>
+	?????? ? ?????? ?? ?????? ?? ?????? "? ??????".</p>
+//javascript
+function prikazi(num, ime) {
+    var slika = document.getElementById("big");
+    slika.src = "slike/slika" + num + ".jpg";
+
+    var textdata = document.getElementById("textbox");
+    textdata.src = "text/" + num + ".html";
+}
+//css
+.container{
+border-color: white;
+width: 640px;
+height: 480px;
+border: 3px solid white;
+text-align:center;
+}
+.center{
+width: 400px;
+height: 280px;
+}
+.little{
+width: 64px;
+height: 40px;
+}
+
+h1{
+	font-size:45px;
+	color:white;
+	text-align:left;
+}
+
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #333;
+  font-size:20px;
+}
+
+li {
+  float: left;
+}
+
+li a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+li a:hover {
+  background-color: #111;
+}
+
+body{
+	background-color: b4d9eb;
+}
+
+p{
+	color:white;
+	font-size:24px;
+	text-align:justify;
+}
+
+//napraviti obvojene html strane za opise slika i nazvati ih 1, 2, 3... i ubaciti slike koje se zovu slika1, slika2
+
+//primer html za 1, 2...
+    <html>
+    <body style="color: white;">
+        keopsova piramida ...
+    </body>
+    </html>
+    </textarea>
+
+
+</body>
+</html>

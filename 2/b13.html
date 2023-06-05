@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+</head>
+<body>
+    <textarea>
+
+//index-aspx ne html
+<div id="navigation">
+    <ul>
+    <li><a href="Korisnicko Uputstvo.aspx">Korisnicko Uputstvo</a></li>
+    <li><a href="Vazni Brojevi.aspx">Vazni Brojevi</a></li>
+        </ul>
+    </div>
+    
+    <form id="form1" runat="server">
+        <center>
+
+            <div>
+                <asp:TextBox ID="TextBox1" runat="server"></asp:TextBox>
+                <asp:Label ID="Label1" runat="server" Text="Ime"></asp:Label>
+            </div>
+
+            <asp:TextBox ID="TextBox2" runat="server"></asp:TextBox>
+            <asp:Label ID="Label2" runat="server" Text="Prezime"></asp:Label>
+            <br />
+            <asp:TextBox ID="TextBox3" runat="server"></asp:TextBox>
+            <asp:Label ID="Label3" runat="server" Text="Adresa"></asp:Label>
+            <br />
+            <asp:DropDownList ID="DropDownList1" runat="server">
+                <asp:ListItem>Izaberite...</asp:ListItem>
+                <asp:ListItem>Backo Gradiste</asp:ListItem>
+                <asp:ListItem>Becej</asp:ListItem>
+                <asp:ListItem>Turija</asp:ListItem>
+            </asp:DropDownList>
+            <asp:Label ID="Label4" runat="server" Text="Mesto"></asp:Label>
+            <br />
+            <asp:TextBox ID="TextBox4" runat="server"></asp:TextBox>
+            <asp:Label ID="Label5" runat="server" Text="Broj telefona"></asp:Label>
+            <br />
+            <asp:Button ID="Button1" runat="server" Text="Trazi" OnClick="Button1_Click" style="height: 26px" />
+            <asp:Table ID="Table1" runat="server" BorderStyle="Dotted" GridLines="Both">
+            </asp:Table>
+            //kod za index
+            public partial class TelImenik : System.Web.UI.Page
+            {
+            bool found;
+
+            protected void Page_Load(object sender, EventArgs e)
+            {
+
+            }
+            private void AddCellWithStringToRow(TableRow row, string str)
+            {
+            TableCell c1 = new TableCell();
+            c1.Text = str;
+            row.Cells.Add(c1);
+            }
+
+            protected void Button1_Click(object sender, EventArgs e)
+            {
+            {
+            StreamReader sr = new StreamReader(Server.MapPath("imenik.txt"));
+            TelImenik im = new TelImenik();
+
+            Table1.Rows.Clear();
+
+            TableRow tr = new TableRow();
+
+            AddCellWithStringToRow(tr, "ID");
+            AddCellWithStringToRow(tr, "Ime");
+            AddCellWithStringToRow(tr, "Prezime");
+            AddCellWithStringToRow(tr, "Adresa");
+            AddCellWithStringToRow(tr, "Mesto");
+            AddCellWithStringToRow(tr, "Broj");
+            AddCellWithStringToRow(tr, "Email");
+
+            Table1.Rows.Add(tr);
+
+            while (!sr.EndOfStream)
+            {
+            found = false;
+
+            im.metoda(sr.ReadLine());
+
+            if (TextBox1.Text == "" && TextBox2.Text == "" && TextBox3.Text == "" && TextBox4.Text == "" && DropDownList1.Text == "Izaberite...")
+            {
+            found = true;
+            }
+            else
+            {
+            if (TextBox1.Text != "")
+            {
+            if (im.Ime.IndexOf(TextBox1.Text) >= 0)
+            {
+            found = true;
+            }
+            else
+            {
+            continue;
+            }
+            }
+
+            if (TextBox2.Text != "")
+            {
+            if (im.Prezime.IndexOf(TextBox2.Text) >= 0)
+            {
+            found = true;
+            }
+            else
+            {
+            continue;
+            }
+            }
+
+            if (TextBox3.Text != "")
+            {
+            if (im.Adresa.IndexOf(TextBox3.Text) >= 0)
+            {
+            found = true;
+            }
+            else
+            {
+            continue;
+            }
+            }
+
+            if (TextBox4.Text != "")
+            {
+            if (im.Broj.IndexOf(TextBox4.Text) >= 0)
+            {
+            found = true;
+            }
+            else
+            {
+            continue;
+            }
+            }
+
+            if (DropDownList1.Text != "Izaberite...")
+            {
+            if (DropDownList1.Text == im.Mesto)
+            {
+            found = true;
+            }
+            else
+            {
+            continue;
+            }
+            }
+            }
+
+            if (found)
+            {
+            CreateRow(im);
+            }
+
+            }
+            }
+            }
+
+            private void CreateRow(TelImenik im)
+            {
+            TableRow tr = new TableRow();
+
+            TableCell ID = new TableCell();
+            ID.Text = im.ID;
+            tr.Cells.Add(ID);
+
+            TableCell Ime = new TableCell();
+            Ime.Text = im.Ime;
+            tr.Cells.Add(Ime);
+
+            TableCell Prezime = new TableCell();
+            Prezime.Text = im.Prezime;
+            tr.Cells.Add(Prezime);
+
+            TableCell Adresa = new TableCell();
+            Adresa.Text = im.Adresa;
+            tr.Cells.Add(Adresa);
+
+            TableCell Mesto = new TableCell();
+            Mesto.Text = im.Mesto;
+            tr.Cells.Add(Mesto);
+
+            TableCell Broj = new TableCell();
+            Broj.Text = im.Broj;
+            tr.Cells.Add(Broj);
+
+            TableCell Email = new TableCell();
+            Email.Text = im.Email;
+            tr.Cells.Add(Email);
+
+            Table1.Rows.Add(tr);
+            }
+            }
+
+            //css
+            body {
+            background-color:#f3dede;
+            font-family:Calibry;
+            font-size: 24px;
+            }
+
+            #navigation {
+            text-align:center;
+            }
+            #navigation ul {
+            display: inline-block;
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #bb8f8f;
+            color: white;
+            }
+
+            #navigation li {
+            }
+
+            #navigation li a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+            }
+
+            #navigation li a:hover {
+            background-color: white;
+            color: #bb8f8f;
+            }
+
+            #Table1 {
+            background-color: white;
+            color: #bb8f8f;
+            border-color: black;
+            }
+            #vaznibrojevi {
+            text-align: center;
+            }
+            //klasa TelImenik
+            public partial class TelImenik
+            {
+            private string id, ime, prezime, adresa, mesto, broj, email;
+
+            public string ID
+            { get { return id; } }
+
+
+            public string Ime
+            { get { return ime; } }
+
+            public string Prezime
+            { get { return prezime; } }
+
+            public string Adresa
+            { get { return adresa; } }
+
+            public string Mesto
+            { get { return mesto; } }
+
+            public string Broj
+            { get { return broj; } }
+
+            public string Email
+            { get { return email; } }
+
+
+            public void metoda(string s)
+            {
+            string[] podaci = s.Split('|');
+            id = podaci[0];
+            ime = podaci[1];
+            prezime = podaci[2];
+            adresa = podaci[3];
+            mesto = podaci[4];
+            broj = podaci[5];
+            email = podaci[6];
+
+            }
+            }
+
+</textarea>
+
+
+</body>
+</html>

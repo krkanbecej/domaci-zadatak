@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+</head>
+<body>
+    <textarea>
+
+//index-aspx ne html
+<div class="header">
+    <p>CD Katalog</p>
+	    </div>
+
+    <br />
+
+    <br />
+    <br />
+    <br />
+    <br />
+
+    <asp:Button ID="Button1" runat="server" Text="Katalog" Width="139px" OnClick="Button1_Click" />
+    <asp:Button ID="Button2" runat="server" Text="Korisnièko uputstvo" Width="168px" OnClick="Button2_Click" />
+
+       
+    <br />
+    <br />
+
+       
+    <asp:Label ID="Label1" runat="server" Text="Izvodjac:"></asp:Label>
+
+        
+
+    <asp:TextBox ID="TextBox1" runat="server" style="margin-left: 90px" Width="263px"></asp:TextBox>
+    <br />
+    <br />
+    <asp:Label ID="Label2" runat="server" Text="Naziv albuma:"></asp:Label>
+    <asp:TextBox ID="TextBox2" runat="server" style="margin-left: 59px" Width="264px"></asp:TextBox>
+    <br />
+    <br />
+    <asp:Label ID="Label3" runat="server" Text="Zanr:"></asp:Label>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <asp:DropDownList ID="DropDownList1" runat="server" Height="16px" style="margin-left: 8px" Width="132px">
+    <asp:ListItem>Izaberi...</asp:ListItem>
+    <asp:ListItem>Rok</asp:ListItem>
+    <asp:ListItem>Metal</asp:ListItem>
+    <asp:ListItem>Hip hop</asp:ListItem>
+    <asp:ListItem>Tehno</asp:ListItem>
+    <asp:ListItem>Narodna muzika</asp:ListItem>
+    <asp:ListItem>Turbo-folk</asp:ListItem>
+        </asp:DropDownList>
+    <br />
+    <br />
+    <asp:Label ID="Label4" runat="server" Text="Godina izdanja:"></asp:Label>
+    <asp:DropDownList ID="DropDownList2" runat="server" Height="16px" style="margin-left: 54px" Width="132px">
+    <asp:ListItem>Izaberi...</asp:ListItem>
+    <asp:ListItem>1978</asp:ListItem>
+    <asp:ListItem>1985</asp:ListItem>
+    <asp:ListItem>1990</asp:ListItem>
+    <asp:ListItem>1992</asp:ListItem>
+    <asp:ListItem>1995</asp:ListItem>
+    <asp:ListItem>2001</asp:ListItem>
+    <asp:ListItem>2005</asp:ListItem>
+    <asp:ListItem>2011</asp:ListItem>
+        </asp:DropDownList>
+    <br />
+    <br />
+    <asp:Label ID="Label5" runat="server" Text="Izdavacka kuca:"></asp:Label>
+    <asp:TextBox ID="TextBox3" runat="server" style="margin-left: 47px" Width="266px"></asp:TextBox>
+    <br />
+    <br />
+    <asp:Button ID="Button3" runat="server" OnClick="Button3_Click" Text="Trazi" />
+    <br />
+    <br />
+    <asp:Table ID="Table1" runat="server" BorderStyle="Solid" GridLines="Both">
+        </asp:Table>
+
+//kod za index
+protected void Page_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        protected void Button2_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("Uputstvo.aspx");
+        }
+
+        protected void Button1_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("index.aspx");
+        }
+
+        private void AddCellWithStringToRow(TableRow row, string str)
+        {
+            TableCell c1 = new TableCell();
+            c1.Text = str;
+            row.Cells.Add(c1);
+        }
+
+        protected void Button3_Click(object sender, EventArgs e)
+        {
+            StreamReader sr = new StreamReader(Server.MapPath("katalog.txt"));
+            Katalog cd = new Katalog();
+
+            Table1.Rows.Clear();
+            bool found;
+
+            TableRow tr = new TableRow();
+    
+            AddCellWithStringToRow(tr, "Izvoðaè");
+            AddCellWithStringToRow(tr, "Naziv albuma");
+            AddCellWithStringToRow(tr, "Žanr");
+            AddCellWithStringToRow(tr, "Godina izdavanja");
+            AddCellWithStringToRow(tr, "Izdavaèka kuæa");
+            AddCellWithStringToRow(tr, "Slika omota");
+
+            Table1.Rows.Add(tr);
+
+            while (!sr.EndOfStream)
+            {
+                found = false;
+
+                cd.Load(sr.ReadLine());
+                
+                if(TextBox1.Text == "" && TextBox2.Text == "" && TextBox3.Text == "" && DropDownList1.Text == "Izaberi..." && DropDownList2.Text == "Izaberi...")
+                {
+                    found = true;
+                }
+                else
+                {
+                    if (TextBox1.Text != "")
+                    {
+                        if(cd.Izvodjac.IndexOf(TextBox1.Text) >= 0)
+                        {
+                            found = true;
+                        }
+                        else
+                        {
+                            continue;
+                        }
+                    }
+    
+                    if (TextBox2.Text != "")
+                    {
+                        if (cd.Naziv_albuma.IndexOf(TextBox2.Text) >= 0)
+                        {
+                            found = true;
+                        }
+                        else
+                        {
+                            continue;
+                        }
+                    }
+    
+                    if (TextBox3.Text != "")
+                    {
+                        if (cd.Izdavacka_kuca.IndexOf(TextBox3.Text) >= 0)
+                        {
+                            found = true;
+                        }
+                        else
+                        {
+                            continue;
+                        }
+                    }
+    
+                    if (DropDownList1.Text != "Izaberi...")
+                    {
+                        if (DropDownList1.Text == cd.Zanr)
+                        {
+                            found = true;
+                        }
+                        else
+                        {
+                            continue;
+                        }
+                    }
+    
+                    if (DropDownList2.Text != "Izaberi...")
+                    {
+                        if (DropDownList2.Text == cd.Godina_izdanja)
+                        {
+                            found = true;
+                        }
+                        else
+                        {
+                            continue;
+                        }
+                    }
+                }
+                if(found)
+                {
+                    CreateRow(cd);
+                }
+            }
+        }
+
+        private void CreateRow(Katalog cd)
+        {
+            TableRow tr = new TableRow();
+
+            TableCell izvodjac = new TableCell();
+            izvodjac.Text = cd.Izvodjac;
+            tr.Cells.Add(izvodjac);
+
+            TableCell naziv_albuma = new TableCell();
+            naziv_albuma.Text = cd.Naziv_albuma;
+            tr.Cells.Add(naziv_albuma);
+
+            TableCell zanr = new TableCell();
+            zanr.Text = cd.Zanr;
+            tr.Cells.Add(zanr);
+
+            TableCell godina_izdanja = new TableCell();
+            godina_izdanja.Text = cd.Godina_izdanja;
+            tr.Cells.Add(godina_izdanja);
+
+            TableCell izdavacka_kuca = new TableCell();
+            izdavacka_kuca.Text = cd.Izdavacka_kuca;
+            tr.Cells.Add(izdavacka_kuca);
+
+            TableCell slika_omota = new TableCell();
+            slika_omota.Text = "<img src=\"" + cd.Slika_omota + "\" width=200 height=150 />";
+            tr.Cells.Add(slika_omota);
+
+            Table1.Rows.Add(tr);
+        }
+
+//uputstvo
+<div class="header">
+    <p>Korisnièko uputstvo</p>
+	    </div>
+
+    <br />
+
+    <br />
+    <br />
+    <br />
+    <br />
+
+    <asp:Button ID="Button1" runat="server" Text="Katalog" Width="139px" OnClick="Button1_Click" />
+    <asp:Button ID="Button2" runat="server" Text="Korisnièko uputstvo" Width="168px" OnClick="Button2_Click" />
+
+    <div>
+    <h1>Pretraga se vrsi unosom odabranih podataka u teksutalna polja odnosno odabirom u padajucoj listi.</h1>
+    <br />
+    <h1>Posle unosa podataka pritisnite na dugme 'Trazi' kako bi zapoceli pretragu.</h1>
+        </div>
+//css
+body {
+    background-color: white;
+}
+
+.footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: #8fa832;
+    color: white;
+    text-align: center;
+}
+
+.header {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    background-color: darkblue;
+    color: white;
+    font-size: 30px;
+}
+
+//kod za uputstvo
+protected void Button2_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("Uputstvo.aspx");
+        }
+
+        protected void Button1_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("index.aspx");
+        }
+
+//klasa koja ima naziv Katalog
+public class Katalog
+    {
+        private string izvodjac, naziv_albuma, zanr, godina_izdanja, izdavacka_kuca, slika_omota;
+
+
+        public string Slika_omota
+        {
+            get
+            {
+                return slika_omota;
+            }
+        }
+        public string Izvodjac
+        {
+            get
+            {
+                return izvodjac;
+            }
+        }
+
+        public string Naziv_albuma
+        {
+            get
+            {
+                return naziv_albuma;
+            }
+        }
+
+        public string Zanr
+        {
+            get
+            {
+                return zanr;
+            }
+        }
+
+        public string Godina_izdanja
+        {
+            get
+            {
+                return godina_izdanja;
+            }
+        }
+
+        public string Izdavacka_kuca
+        {
+            get
+            {
+                return izdavacka_kuca;
+            }
+        }
+
+
+        public void Load(string s)
+        {
+            string[] podaci = s.Split('|');
+            izvodjac = podaci[0];
+            naziv_albuma = podaci[1];
+            zanr = podaci[2];
+            godina_izdanja = podaci[3];
+            izdavacka_kuca = podaci[4];
+            slika_omota = podaci[5];
+        }
+    }
+
+
+</textarea>
+
+
+</body>
+</html>
